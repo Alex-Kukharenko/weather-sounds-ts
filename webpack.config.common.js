@@ -5,16 +5,16 @@ import CopyPlugin from 'copy-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import postcssPresetEnv from 'postcss-preset-env'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export default {
   context: __dirname + '/src',
-  entry: './index.js',
+  entry: './index.ts',
   output: {
     filename: '[name].[contenthash].js',
     path: __dirname + '/dist',
-    clean: true
+    clean: true,
   },
 
   resolve: {
@@ -23,17 +23,17 @@ export default {
   plugins: [
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: __dirname + "/public/index.html",
+      template: __dirname + '/public/index.html',
     }),
     new CopyPlugin({
       patterns: [
         {
           from: __dirname + '/public/favicon.png',
-          to: __dirname + '/dist'
+          to: __dirname + '/dist',
         },
         {
           from: '/public/assets',
-          to: '/dist/assets'
+          to: '/dist/assets',
         },
       ],
     }),
@@ -47,14 +47,19 @@ export default {
       },
       {
         test: /\.s[ac]ss$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', {
-          loader: 'postcss-loader',
-          options: {
-            postcssOptions: {
-              plugins: [postcssPresetEnv()]
-            }
-          }
-        }, 'sass-loader'],
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: [postcssPresetEnv()],
+              },
+            },
+          },
+          'sass-loader',
+        ],
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
@@ -62,7 +67,7 @@ export default {
       },
       {
         test: /\.[tj]sx?$/,
-        use: "ts-loader",
+        use: 'ts-loader',
         exclude: /node_modules/,
       },
     ],

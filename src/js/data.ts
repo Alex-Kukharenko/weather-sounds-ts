@@ -1,4 +1,4 @@
-const data = [
+const data: Season[] = [
   {
     musicSrc: './assets/sounds/summer.mp3',
     iconSrc: './assets/icons/sun.svg',
@@ -15,5 +15,11 @@ const data = [
     bgImg: './assets/rainy-bg.jpg',
   },
 ]
+
+export interface Season {
+  musicSrc: string
+  iconSrc: string
+  bgImg: string
+}
 
 export { data }
