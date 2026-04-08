@@ -1,53 +1,57 @@
 import './style.scss'
-import { data } from './js/data.js'
-import { setRangeColor } from './js/rangeInput.js'
+import { data } from './js/data'
+import { setRangeColor } from './js/rangeInput'
+import type { Season } from './js/data'
+const COLOR_RANGE_INPUT: [string, string, string] = ['#34badb', '#ddd', '#34badb']
+const PAUSE_ICON_CLASS: string = 'button-menu__icon-paused'
+const PAUSE_ICON_SRC: string = './assets/icons/pause.svg'
+const audioMap = new Map<string, HTMLAudioElement>()
 
-const COLOR_RANGE_INPUT = ['#34badb', '#ddd', '#34badb']
-const PAUSE_ICON_CLASS = 'button-menu__icon-paused'
-const PAUSE_ICON_SRC = './assets/icons/pause.svg'
-const audioMap = new Map()
+let currentAudio: HTMLAudioElement | null = null
+let volumeInput: VolumeInput | null = null
 
-let currentAudio = null
-let volumeInput = null
-
-
-
-const getOrCreateAudio = (src) => {
+const getOrCreateAudio = (src: string): HTMLAudioElement => {
   if (!audioMap.has(src)) {
     audioMap.set(src, new Audio(src))
   }
-  return audioMap.get(src)
+  return audioMap.get(src)!
 }
 
+interface VolumeInput extends HTMLInputElement {
+  getVolume: () => number
+}
 
-const createVolumeInput = () => {
-  const input = document.createElement('input');
+const createVolumeInput = (): VolumeInput => {
+  const input = document.createElement('input') as VolumeInput
   Object.assign(input, {
     type: 'range',
     min: 0,
     max: 100,
     value: 50,
     step: 1,
-    className: 'volume__input'
+    className: 'volume__input',
   })
+
   setRangeColor(input, ...COLOR_RANGE_INPUT)
+
   input.addEventListener('input', () => {
     setRangeColor(input, ...COLOR_RANGE_INPUT)
-    const volume = input.value / 100
+
+    const volume: number = +input.value / 100
     if (currentAudio) {
       currentAudio.volume = volume
     }
   })
-  input.getVolume = () => input.value / 100
+  input.getVolume = () => +input.value / 100
+
   return input
 }
 
-
-const createButtonMenu = (data) => {
+const createButtonMenu = (data: Season[]): HTMLElement => {
   const buttonMenu = document.createElement('div')
   buttonMenu.className = 'button-menu'
 
-  data.forEach((item) => {
+  data.forEach((item: Season) => {
     const button = document.createElement('button')
     button.className = 'button-menu__play'
 
@@ -59,7 +63,7 @@ const createButtonMenu = (data) => {
       const img = Object.assign(document.createElement('img'), {
         className: 'button-menu__icon',
         src: item.iconSrc,
-        alt: 'icon'
+        alt: 'icon',
       })
       button.appendChild(img)
     }
@@ -67,17 +71,17 @@ const createButtonMenu = (data) => {
     const iconPause = Object.assign(document.createElement('img'), {
       className: PAUSE_ICON_CLASS,
       src: PAUSE_ICON_SRC,
-      alt: 'pause'
+      alt: 'pause',
     })
     button.appendChild(iconPause)
 
     button.addEventListener('click', () => {
-      const container = document.querySelector('.container')
+      const container = document.querySelector('.container') as HTMLElement
       container.style.setProperty('--before-bg', `url('${item.bgImg}')`)
 
       const audio = getOrCreateAudio(item.musicSrc)
 
-      document.querySelectorAll(`.${PAUSE_ICON_CLASS}`).forEach(icon => {
+      document.querySelectorAll<HTMLElement>(`.${PAUSE_ICON_CLASS}`).forEach((icon) => {
         icon.style.setProperty('--opacity-btn', '0')
       })
 
@@ -107,7 +111,7 @@ const createButtonMenu = (data) => {
 }
 
 // App
-const initApp = () => {
+const initApp = (): HTMLElement => {
   const container = document.createElement('div')
   container.className = 'container'
 
@@ -121,4 +125,4 @@ const initApp = () => {
   return container
 }
 
-document.getElementById('app').append(initApp())
+document.getElementById('app')?.append(initApp())
